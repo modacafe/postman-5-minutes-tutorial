@@ -1,2 +1,66 @@
-<h1>{{title}}</h1>
-<p>Welcome to {{title}}</p>
+<h4 class="error">{{error}}</h4>
+<h4 class="message">{{message}}</h4>
+
+<h1>Tasks:</h1>
+<div class="tasks">
+    {{#each tasks}}
+        <div class="task-item">
+            <h4>Title: {{this.title}}</h4>
+            <p>ID: {{@index}}</p>
+            <p>Body: {{this.body}}</p>
+            <p>
+                Done:
+                {{#if this.done}}
+                Yes
+                {{else}}
+                No
+                {{/if}}
+            </p>
+        </div>
+    {{/each}}
+</div>
+
+<h3>GET Task:</h3>
+<form action="/api/v1/task" method="get">
+    <label for="id-get">Task ID:</label>
+    <input type="number" name="taskId" id="id-get" placeholder="ID number" required>
+    <input type="submit" value="GET TASK">
+</form>
+
+<h3>CREATE Task:</h3>
+<form action="/api/v1/task/create" method="post">
+    <label for="title-post">Task Title:</label>
+    <input type="text" name="title" placeholder="Task Title" id="title-post" required>
+    <br />
+    <label for="body-post">Task Body:</label>
+    <input type="text" name="body" placeholder="Task Body" id="body-post" required>
+    <br />
+    <label for="done-post">Is the Task done?</label>
+    <input type="checkbox" name="done" id="done-post">
+    <br />
+    <input type="submit" value="CREATE TASK">
+</form>
+
+<h3>UPDATE Task:</h3>
+<form action="/api/v1/task/update" method="post">
+    <label for="id-put">Task ID:</label>
+    <input type="number" name="taskId" id="id-put" placeholder="ID number" required>
+    <br />
+    <label for="title-put">Task Title:</label>
+    <input type="text" name="title" placeholder="Task Title" id="title-put" >
+    <br />
+    <label for="body-put">Task Body:</label>
+    <input type="text" name="body" placeholder="Task Body" id="body-put" >
+    <br />
+    <label for="done-put">Is the Task done?</label>
+    <input type="checkbox" name="done" id="done-put">
+    <br />
+    <input type="submit" value="UPDATE TASK">
+</form>
+
+<h3>DELETE Task:</h3>
+<form action="/api/v1/task/delete" method="post">
+    <label for="id-delete">Task ID:</label>
+    <input type="number" name="taskId" id="id-delete" placeholder="ID number" required>
+    <input type="submit" value="DELETE TASK">
+</form>
