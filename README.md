@@ -10,23 +10,29 @@ GET `/api/v1/task?taskId=<Task ID>`
 
 To create a task
 POST `/api/v1/task/create`
-```body: {
+```
+body: {
   title: String Required!,
   body: String Required!,
   done: Boolean,
-}```
+}
+```
 
 To update a task by id
 POST `/api/v1/task/update`
-```body: {
+```
+body: {
   taskId: Number Required!,
   title: String,
   body: String,
   done: Boolean,
-}```
+}
+```
 
 To delete a task by id
 POST `/api/v1/task/delete`
-```body: {
+```
+body: {
   taskId: Number Required!,
-}```
+}
+```
