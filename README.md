@@ -6,33 +6,33 @@ and then run `yarn start` and go to [http://localhost:3000/](http://localhost:30
 
 API V1:
 To read a task by id
-GET `/api/v1/task?taskId=<Task ID>`
+GET `/api/v1/tasks/:id`
 
 To create a task
-POST `/api/v1/task/create`
+POST `/api/v1/tasks`
 ```
 body: {
   title: String Required!,
-  body: String Required!,
+  description: String Required!,
   done: Boolean,
 }
 ```
 
 To update a task by id
-POST `/api/v1/task/update`
+PUT `/api/v1/tasks/:id`
 ```
 body: {
-  taskId: Number Required!,
+  id: Number Required!,
   title: String,
-  body: String,
+  description: String,
   done: Boolean,
 }
 ```
 
 To delete a task by id
-POST `/api/v1/task/delete`
+DELETE `/api/v1/tasks/1`
 ```
 body: {
-  taskId: Number Required!,
+  id: Number Required!,
 }
 ```
