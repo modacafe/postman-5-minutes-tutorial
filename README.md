@@ -1,6 +1,3 @@
-# visi
-A Node.js REST JSON API with Express
-
 run `yarn` to install dependencies
 and then run `yarn start` and go to [http://localhost:3000/](http://localhost:3000/) in your browser
 
