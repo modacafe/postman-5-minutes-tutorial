@@ -6,23 +6,28 @@ const router = express.Router();
 
 /* if we want to add a new verion it would be easy to create a enw path with /api/v2/task */
 const API_V1_PATH = '/v1/';
-const TASK_PATH = API_V1_PATH + 'task';
+const TASK_PATH = API_V1_PATH + 'tasks';
+
+router.get(`${TASK_PATH}`, function(req, res) {
+  tasks.getTasks(function (allTasks) {
+    renderTasks(res, null, allTasks)
+  })
+});
 
 /* READ api task. */
-router.get(TASK_PATH, function(req, res) {
-  const id = parseInt(req.query.taskId, 10);
+router.get(`${TASK_PATH}/:id`, function(req, res) {
+  const id = parseInt(req.params.id, 10);
   if (id >= 0) {
     tasks.get(id, function (item) {
       if (item === 404) {
-        renderTasks(res, 'Task Not Found');
+        renderTasks(res, 404);
       } else {
-        renderTasks(res, null, `
-          Task received 
-          Task ID: ${id}
-          Task Title: ${item.title}
-          Task Body: ${item.body}
-          Task Done: ${item.body ? 'Yes' : 'No'}
-        `);
+        renderTasks(res, null, {
+          id: item.id,
+          title: item.title,
+          description: item.description,
+          done: item.done,
+        });
       }
     });
   } else {
@@ -31,15 +36,15 @@ router.get(TASK_PATH, function(req, res) {
 });
 
 /* CREATE api task. */
-router.post(TASK_PATH + '/create', function(req, res) {
+router.post(TASK_PATH, function(req, res) {
   const title = req.body.title;
-  const body = req.body.body;
-  const done = req.body.done === 'on';
+  const description = req.body.description;
+  const done = req.body.done;
 
-  if (title && title.trim().length && body && body.trim().length) {
+  if (title && title.trim().length && description && description.trim().length) {
     tasks.create({
       title,
-      body,
+      description,
       done
     }, function(item) {
       renderTasks(res, null, 'Task Created');
@@ -50,16 +55,16 @@ router.post(TASK_PATH + '/create', function(req, res) {
 });
 
 /* UPDATE api task. */
-router.post(TASK_PATH + '/update', function (req, res) {
-  const id = parseInt(req.body.taskId, 10);
+router.put(`${TASK_PATH}/:id`, function (req, res) {
+  const id = parseInt(req.params.id, 10);
   const title = req.body.title;
-  const body = req.body.body;
+  const description = req.body.description;
   const done = req.body.done === 'on';
   if (id >= 0) {
     tasks.update({
       id,
       title,
-      body,
+      description,
       done
     }, function (item) {
       if (item === 404) {
@@ -74,8 +79,8 @@ router.post(TASK_PATH + '/update', function (req, res) {
 });
 
 /* DELETE api task. */
-router.post(TASK_PATH + '/delete', function (req, res) {
-  const id = parseInt(req.body.taskId, 10);
+router.delete(`${TASK_PATH}/:id`, function (req, res) {
+  const id = parseInt(req.params.id, 10);
   if (id >= 0) {
     tasks.delete({
       id

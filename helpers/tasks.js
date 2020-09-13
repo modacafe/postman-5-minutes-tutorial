@@ -2,6 +2,31 @@ const jsonfile = require('jsonfile');
 const path = require('path');
 const DB_PATH = path.join(__dirname, '../tasks.json');
 
+function getTasks(callback) {
+    jsonfile.readFile(DB_PATH, function (err, db) {
+        try {
+            if (err) {
+                console.error(err);
+                callback(err);
+                process.exit(1);
+            } else {
+                let tasks = db.tasks;
+                tasks = tasks.map((task, index) => {
+                    task.id = index + 1;
+                    return task
+                })
+                if (tasks) {
+                    callback(tasks);
+                } else {
+                    callback(404);
+                }
+            }
+        } catch (error) {
+            callback(404);
+        }
+    });
+}
+
 function getTask(id, callback) {
     jsonfile.readFile(DB_PATH, function (err, db) {
         try {
@@ -10,7 +35,7 @@ function getTask(id, callback) {
                 callback(err);
                 process.exit(1);
             } else {
-                const task = db.tasks[id];
+                const task = db.tasks.find(task => task.id === id);
                 if (task) {
                     callback(task);
                 } else {
@@ -31,8 +56,9 @@ function createTask(data, callback) {
             process.exit(1);
         } else {
             const task = {
+                id: db.tasks.length,
                 title: data.title,
-                body: data.body,
+                description: data.description,
                 done: data.done
             };
             db.tasks.push(task);
@@ -57,13 +83,20 @@ function updateTask(data, callback) {
                 callback(err);
                 process.exit(1);
             } else {
-                if (db.tasks[data.id]) {
+                const task = db.tasks.find(task => task.id === data.id);
+                if (task) {
                     const updatedTask = {
-                        title: data.title.trim() || db.tasks[id].title,
-                        body: data.body.trim() || db.tasks[id].body,
+                        id: task.id,
+                        title: data.title.trim() || task.title,
+                        description: data.description || task.description,
                         done: !!data.done
                     };
-                    db.tasks[data.id] = updatedTask;
+                    db.tasks = db.tasks.map(task => {
+                        if (task.id === updatedTask.id) {
+                            return updatedTask
+                        }
+                        return task;
+                    })
                     jsonfile.writeFile(DB_PATH, db, function (err) {
                         if (err) {
                             console.error(err);
@@ -91,8 +124,9 @@ function deleteTask(data, callback) {
                 callback(err);
                 process.exit(1);
             } else {
-                if (db.tasks[data.id]) {
-                    db.tasks.splice(data.id, 1);
+                const task = db.tasks.find(task => task.id == data.id);
+                if (task) {
+                    db.tasks = db.tasks.filter(task => task.id !== data.id)
                     jsonfile.writeFile(DB_PATH, db, function (err) {
                         if (err) {
                             console.error(err);
@@ -114,6 +148,7 @@ function deleteTask(data, callback) {
 
 module.exports = {
     get: getTask,
+    getTasks: getTasks,
     create: createTask,
     update: updateTask,
     delete: deleteTask,
